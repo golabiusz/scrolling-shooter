@@ -8,19 +8,19 @@ import android.graphics.Rect;
 import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 
-class HUD {
+public class HUD {
 
-  private int textFormatting;
-  private int screenHeight;
-  private int screenWidth;
+  private final int textFormatting;
+  private final int screenHeight;
+  private final int screenWidth;
 
   private ArrayList<Rect> controls;
 
-  static int UP = 0;
-  static int DOWN = 1;
-  static int FLIP = 2;
-  static int SHOOT = 3;
-  static int PAUSE = 4;
+  public final static int UP = 0;
+  public final static int DOWN = 1;
+  public final static int FLIP = 2;
+  public final static int SHOOT = 3;
+  public final static int PAUSE = 4;
 
   HUD(@NotNull Point size) {
     screenHeight = size.y;

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import org.jetbrains.annotations.NotNull;
 
-final class GameState {
+public final class GameState {
 
   private static volatile boolean isThreadRunning = false;
   private static volatile boolean isPaused = true;
