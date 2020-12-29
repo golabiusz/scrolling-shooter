@@ -9,16 +9,16 @@ public class Transform {
   private int xClip;
   private boolean reversedFirst = false;
 
-  private RectF collider;
+  private final RectF collider;
   private PointF location;
   private boolean isFacingRight = true;
   private boolean isHeadingUp = false;
   private boolean isHeadingDown = false;
   private boolean isHeadingLeft = false;
   private boolean isHeadingRight = false;
-  private float speed;
-  private float objectHeight;
-  private float objectWidth;
+  private final float speed;
+  private final float objectHeight;
+  private final float objectWidth;
   private static PointF screenSize;
 
   public Transform(

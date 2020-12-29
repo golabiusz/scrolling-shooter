@@ -3,6 +3,10 @@ package com.golabiusz.scrollingshooter;
 import android.content.Context;
 import android.graphics.PointF;
 
+import com.golabiusz.scrollingshooter.gameobject.AlienChaseSpec;
+import com.golabiusz.scrollingshooter.gameobject.AlienDiverSpec;
+import com.golabiusz.scrollingshooter.gameobject.AlienLaserSpec;
+import com.golabiusz.scrollingshooter.gameobject.AlienPatrolSpec;
 import com.golabiusz.scrollingshooter.gameobject.BackgroundSpec;
 import com.golabiusz.scrollingshooter.gameobject.GameObject;
 import com.golabiusz.scrollingshooter.gameobject.GameObjectFactory;
@@ -39,22 +43,43 @@ class Level {
     buildGameObjects(factory);
   }
 
-  ArrayList<GameObject> buildGameObjects(@NotNull GameObjectFactory factory) {
+  private void buildGameObjects(@NotNull GameObjectFactory factory) {
     objects.clear();
 
     objects.add(BACKGROUND_INDEX, factory.create(new BackgroundSpec()));
-    objects.add(PLAYER_INDEX, factory.create(new PlayerSpec()));
 
+    createPlayer(factory);
+    createPlayerLasers(factory);
+
+    createAliens(factory);
+    createAliensLasers(factory);
+  }
+
+  private void createPlayer(@NotNull GameObjectFactory factory) {
+    objects.add(PLAYER_INDEX, factory.create(new PlayerSpec()));
+  }
+
+  private void createPlayerLasers(GameObjectFactory factory) {
     for (int i = FIRST_PLAYER_LASER; i != LAST_PLAYER_LASER + 1; i++) {
       objects.add(i, factory.create(new PlayerLaserSpec()));
     }
     nextPlayerLaser = FIRST_PLAYER_LASER;
+  }
 
-    // Create some aliens
+  private void createAliens(@NotNull GameObjectFactory factory) {
+    objects.add(FIRST_ALIEN, factory.create(new AlienChaseSpec()));
+    objects.add(SECOND_ALIEN, factory.create(new AlienPatrolSpec()));
+    objects.add(THIRD_ALIEN, factory.create(new AlienPatrolSpec()));
+    objects.add(FOURTH_ALIEN, factory.create(new AlienChaseSpec()));
+    objects.add(FIFTH_ALIEN, factory.create(new AlienDiverSpec()));
+    objects.add(SIXTH_ALIEN, factory.create(new AlienDiverSpec()));
+  }
 
-    // Create some alien lasers
-
-    return objects;
+  private void createAliensLasers(GameObjectFactory factory) {
+    for (int i = FIRST_ALIEN_LASER; i < LAST_ALIEN_LASER + 1; i++) {
+      objects.add(i, factory.create(new AlienLaserSpec()));
+    }
+    nextAlienLaser = FIRST_ALIEN_LASER;
   }
 
   ArrayList<GameObject> getGameObjects() {

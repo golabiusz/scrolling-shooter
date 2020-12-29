@@ -1,6 +1,5 @@
 package com.golabiusz.scrollingshooter.gameobject;
 
-import android.util.Log;
 import com.golabiusz.scrollingshooter.Transform;
 import org.jetbrains.annotations.NotNull;
 
