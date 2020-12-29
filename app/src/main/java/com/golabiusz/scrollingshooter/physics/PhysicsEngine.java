@@ -1,20 +1,22 @@
-package com.golabiusz.scrollingshooter;
+package com.golabiusz.scrollingshooter.physics;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
+import com.golabiusz.scrollingshooter.GameState;
+import com.golabiusz.scrollingshooter.Level;
 import com.golabiusz.scrollingshooter.gameobject.GameObject;
 import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 
-class PhysicsEngine {
+public class PhysicsEngine {
 
   private final ParticleSystem particleSystem;
 
-  PhysicsEngine(ParticleSystem particleSystem) {
+  public PhysicsEngine(ParticleSystem particleSystem) {
     this.particleSystem = particleSystem;
   }
 
-  boolean update(long fps, @NotNull ArrayList<GameObject> objects, GameState gameState) {
+  public boolean update(long fps, @NotNull ArrayList<GameObject> objects, GameState gameState) {
     for (GameObject object : objects) {
       if (object.isActive()) {
         object.update(fps, objects.get(Level.PLAYER_INDEX).getTransform());

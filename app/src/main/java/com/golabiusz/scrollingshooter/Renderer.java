@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import com.golabiusz.scrollingshooter.gameobject.GameObject;
+import com.golabiusz.scrollingshooter.physics.ParticleSystem;
 import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 

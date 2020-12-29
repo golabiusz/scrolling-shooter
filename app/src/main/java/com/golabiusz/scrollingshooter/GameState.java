@@ -52,7 +52,7 @@ public final class GameState {
     startDrawing();
   }
 
-  void loseLife() {
+  public void loseLife() {
     numLives--;
     soundEngine.playPlayerExplode();
 
@@ -120,7 +120,7 @@ public final class GameState {
     return score;
   }
 
-  void increaseScore() {
+  public void increaseScore() {
     score++;
     soundEngine.playAlienExplode();
   }

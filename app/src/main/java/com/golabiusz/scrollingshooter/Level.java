@@ -15,7 +15,7 @@ import com.golabiusz.scrollingshooter.gameobject.PlayerSpec;
 import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 
-class Level {
+public class Level {
 
   // Keep track of specific types
   public static final int BACKGROUND_INDEX = 0;
