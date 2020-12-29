@@ -13,17 +13,19 @@ public final class GameState {
   private static volatile boolean isDrawing = false;
 
   // This object will have access to the deSpawnReSpawn method in GameEngine
-  private GameStarter gameStarter;
+  private final GameStarter gameStarter;
+  private final SoundEngine soundEngine;
 
   private int score;
   private int highScore;
   private int numLives;
 
   // This is how we will make all the high scores persist
-  private SharedPreferences.Editor editor;
+  private final SharedPreferences.Editor editor;
 
-  GameState(GameStarter gameStarter, @NotNull Context context) {
+  GameState(GameStarter gameStarter, SoundEngine soundEngine, @NotNull Context context) {
     this.gameStarter = gameStarter;
+    this.soundEngine = soundEngine;
 
     // Get the current high score
     SharedPreferences prefs;
@@ -50,7 +52,7 @@ public final class GameState {
     startDrawing();
   }
 
-  void loseLife(@NotNull SoundEngine soundEngine) {
+  void loseLife() {
     numLives--;
     soundEngine.playPlayerExplode();
 
@@ -120,6 +122,7 @@ public final class GameState {
 
   void increaseScore() {
     score++;
+    soundEngine.playAlienExplode();
   }
 
   int getHighScore() {

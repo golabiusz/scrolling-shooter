@@ -1,6 +1,5 @@
 package com.golabiusz.scrollingshooter;
 
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import java.util.ArrayList;

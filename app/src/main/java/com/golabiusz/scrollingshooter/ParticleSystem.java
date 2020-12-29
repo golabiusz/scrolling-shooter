@@ -54,7 +54,7 @@ class ParticleSystem {
   }
 
   void draw(Canvas canvas, Paint paint) {
-    final int particleSize = 10;
+    final int particleSize = 5;
 
     for (Particle particle : particles) {
       paint.setARGB(

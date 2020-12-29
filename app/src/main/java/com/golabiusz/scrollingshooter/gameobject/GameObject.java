@@ -67,11 +67,11 @@ public class GameObject {
     return false;
   }
 
-  public boolean checkActive() {
+  public boolean isActive() {
     return isActive;
   }
 
-  String getTag() {
+  public String getTag() {
     return tag;
   }
 

@@ -49,7 +49,7 @@ class Renderer {
 
   private void drawGameObjects(@NotNull ArrayList<GameObject> objects) {
     for (GameObject object : objects) {
-      if (object.checkActive()) {
+      if (object.isActive()) {
         object.draw(canvas, paint);
       }
     }

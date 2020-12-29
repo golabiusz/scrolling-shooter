@@ -10,7 +10,7 @@ import com.golabiusz.scrollingshooter.gameobject.GameObject;
 import java.util.ArrayList;
 
 public class GameEngine extends SurfaceView
-    implements Runnable, GameStarter, GameEngineBroadcaster, PlayerLaserSpawner {
+    implements Runnable, GameStarter, GameEngineBroadcaster, PlayerLaserSpawner, AlienLaserSpawner {
 
   private Thread thread = null;
   private long fps;
@@ -30,14 +30,14 @@ public class GameEngine extends SurfaceView
     super(context);
 
     uiController = new UIController(this);
-    gameState = new GameState(this, context);
     soundEngine = new SoundEngine(context);
+    gameState = new GameState(this, soundEngine, context);
     hud = new HUD(size);
     renderer = new Renderer(this);
-    physicsEngine = new PhysicsEngine();
 
     particleSystem = new ParticleSystem();
     particleSystem.init(100);
+    physicsEngine = new PhysicsEngine(particleSystem);
 
     level = new Level(context, new PointF(size.x, size.y), this);
   }
@@ -53,7 +53,7 @@ public class GameEngine extends SurfaceView
       ArrayList<GameObject> objects = level.getGameObjects();
 
       if (!gameState.isPaused()) {
-        if (physicsEngine.update(fps, objects, gameState, soundEngine, particleSystem)) {
+        if (physicsEngine.update(fps, objects, gameState)) {
           deSpawnReSpawn();
         }
       }
@@ -93,6 +93,20 @@ public class GameEngine extends SurfaceView
     return true;
   }
 
+  @Override
+  public void spawnAlienLaser(Transform transform) {
+    ArrayList<GameObject> objects = level.getGameObjects();
+
+    if (objects.get(Level.nextAlienLaser).spawn(transform)) {
+      soundEngine.playShoot();
+
+      ++Level.nextAlienLaser;
+      if (Level.nextAlienLaser == Level.LAST_ALIEN_LASER + 1) {
+        Level.nextAlienLaser = Level.FIRST_ALIEN_LASER;
+      }
+    }
+  }
+
   void stopThread() {
     gameState.stopEverything();
 
@@ -119,5 +133,9 @@ public class GameEngine extends SurfaceView
 
     objects.get(Level.PLAYER_INDEX).spawn(objects.get(Level.PLAYER_INDEX).getTransform());
     objects.get(Level.BACKGROUND_INDEX).spawn(objects.get(Level.PLAYER_INDEX).getTransform());
+
+    for (int i = Level.FIRST_ALIEN; i < Level.LAST_ALIEN + 1; ++i) {
+      objects.get(i).spawn(objects.get(Level.PLAYER_INDEX).getTransform());
+    }
   }
 }
