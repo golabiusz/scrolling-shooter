@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 class AlienPatrolMovementComponent implements MovementComponent {
 
   private final AlienLaserSpawner alienLaserSpawner;
-  private final Random mShotRandom = new Random();
+  private final Random shotRandom = new Random();
 
   AlienPatrolMovementComponent(AlienLaserSpawner als) {
     alienLaserSpawner = als;
@@ -17,37 +17,64 @@ class AlienPatrolMovementComponent implements MovementComponent {
 
   @Override
   public boolean move(long fps, @NotNull Transform transform, @NotNull Transform playerTransform) {
+    moveHorizontally(fps, transform, playerTransform);
+    moveVertically(fps, transform);
 
-    final int TAKE_SHOT = 0;
-    // 1 in 100 chance of shot being fired when in line with player
-    final int SHOT_CHANCE = 100;
+    transform.updateCollider();
 
-    PointF playerLocation = playerTransform.getLocation();
+    shoot(transform, playerTransform);
+
+    return true;
+  }
+
+  private void moveHorizontally(
+      long fps,
+      @NotNull Transform transform,
+      @NotNull Transform playerTransform) {
 
     float screenX = transform.getScreenSize().x;
-    float screenY = transform.getScreenSize().y;
-
-    // How far ahead can the alien see?
-    float mSeeingDistance = screenX * .5f;
-
-    PointF location = transform.getLocation();
     float speed = transform.getSpeed();
-    float height = transform.getObjectHeight();
-
-    // Stop the alien going too far away
-    final float MIN_VERTICAL_BOUNDS = 0;
-    float MAX_VERTICAL_BOUNDS = screenY - height;
     final float MAX_HORIZONTAL_BOUNDS = 2 * screenX;
     final float MIN_HORIZONTAL_BOUNDS = 2 * -screenX;
 
+    PointF location = transform.getLocation();
+
+    float horizontalSpeedAdjustmentRelativeToPlayer =
+        calculateHorizontalSpeedAdjustment(transform, playerTransform);
+
+    // Move horizontally taking into account the speed modification
+    if (transform.isHeadingLeft()) {
+      location.x -= (speed + horizontalSpeedAdjustmentRelativeToPlayer) / fps;
+
+      // Turn the ship around when it reaches the extent of its horizontal patrol area
+      if (location.x < MIN_HORIZONTAL_BOUNDS) {
+        location.x = MIN_HORIZONTAL_BOUNDS;
+        transform.headRight();
+      }
+    } else {
+      location.x += (speed + horizontalSpeedAdjustmentRelativeToPlayer) / fps;
+
+      // Turn the ship around when it reaches the extent of its horizontal patrol area
+      if (location.x > MAX_HORIZONTAL_BOUNDS) {
+        location.x = MAX_HORIZONTAL_BOUNDS;
+        transform.headLeft();
+      }
+    }
+  }
+
+  private float calculateHorizontalSpeedAdjustment(
+      @NotNull Transform transform,
+      @NotNull Transform playerTransform) {
     // Adjust the horizontal speed relative to the player's heading
-    // Default is no horizontal speed adjustment
     float horizontalSpeedAdjustmentRelativeToPlayer = 0;
     // How much to speed up or slow down relative to player's heading
     float horizontalSpeedAdjustmentModifier = .8f;
+    // How far ahead can the alien see?
+    float seeingDistance = transform.getScreenSize().x * .5f;
+    float speed = transform.getSpeed();
 
     // Can the Alien "see" the player? If so make speed relative
-    if (Math.abs(location.x - playerLocation.x) < mSeeingDistance) {
+    if (Math.abs(transform.getLocation().x - playerTransform.getLocation().x) < seeingDistance) {
       if (playerTransform.isFacingRight() != transform.isFacingRight()) {
         // Facing a different way speed up the alien
         horizontalSpeedAdjustmentRelativeToPlayer = speed * horizontalSpeedAdjustmentModifier;
@@ -57,57 +84,47 @@ class AlienPatrolMovementComponent implements MovementComponent {
       }
     }
 
-    // Move horizontally taking into account
-    // the speed modification
-    if (transform.isHeadingLeft()) {
-      location.x -= (speed + horizontalSpeedAdjustmentRelativeToPlayer) / fps;
+    return horizontalSpeedAdjustmentRelativeToPlayer;
+  }
 
-      // Turn the ship around when it reaches the
-      // extent of its horizontal patrol area
-      if (location.x < MIN_HORIZONTAL_BOUNDS) {
-        location.x = MIN_HORIZONTAL_BOUNDS;
-        transform.headRight();
-      }
-    } else {
-      location.x += (speed + horizontalSpeedAdjustmentRelativeToPlayer) / fps;
+  private void moveVertically(long fps, @NotNull Transform transform) {
+    float screenY = transform.getScreenSize().y;
+    final float MIN_VERTICAL_BOUNDS = 0;
+    float MAX_VERTICAL_BOUNDS = screenY - transform.getObjectHeight();
 
-      // Turn the ship around when it reaches the
-      // extent of its horizontal patrol area
-      if (location.x > MAX_HORIZONTAL_BOUNDS) {
-        location.x = MAX_HORIZONTAL_BOUNDS;
-        transform.headLeft();
-      }
-    }
+    PointF location = transform.getLocation();
 
-    // Vertical speed remains same,
-    // Not affected by speed adjustment
     if (transform.isHeadingDown()) {
-      location.y += (speed) / fps;
+      location.y += (transform.getSpeed()) / fps;
       if (location.y > MAX_VERTICAL_BOUNDS) {
         transform.headUp();
       }
     } else {
-      location.y -= (speed) / fps;
+      location.y -= (transform.getSpeed()) / fps;
       if (location.y < MIN_VERTICAL_BOUNDS) {
         transform.headDown();
       }
     }
+  }
 
-    transform.updateCollider();
+  private void shoot(@NotNull Transform transform, @NotNull Transform playerTransform) {
+    // 1 in 100 chances of shot being fired when in line with player
+    final int TAKE_SHOT = 0;
+    final int SHOT_CHANCE = 100;
 
-    // Shoot if the alien within a ships height above, below, or in line with the player?
-    // This could be a hit or a miss
-    if (mShotRandom.nextInt(SHOT_CHANCE) == TAKE_SHOT) {
-      if (Math.abs(playerLocation.y - location.y) < height) {
+    PointF location = transform.getLocation();
+    PointF playerLocation = playerTransform.getLocation();
+
+    if (shotRandom.nextInt(SHOT_CHANCE) == TAKE_SHOT) {
+      // shoot if the alien within a ships height above, below, or in line with the player?
+      if (Math.abs(playerLocation.y - location.y) < transform.getObjectHeight()) {
         // is the alien facing the right direction and close enough to the player
         if ((transform.isFacingRight() && playerLocation.x > location.x
             || !transform.isFacingRight() && playerLocation.x < location.x)
-            && Math.abs(playerLocation.x - location.x) < screenX) {
+            && Math.abs(playerLocation.x - location.x) < transform.getScreenSize().x) {
           alienLaserSpawner.spawnAlienLaser(transform);
         }
       }
     }
-
-    return true;
   }
 }

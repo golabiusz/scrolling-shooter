@@ -1,4 +1,4 @@
-package com.golabiusz.scrollingshooter;
+package com.golabiusz.scrollingshooter.physics;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -6,12 +6,16 @@ import android.graphics.PointF;
 import java.util.ArrayList;
 import java.util.Random;
 
-class ParticleSystem {
+public class ParticleSystem {
 
   private float duration;
   private ArrayList<Particle> particles;
   private final Random random = new Random();
   private boolean isRunning = false;
+
+  public ParticleSystem(int numParticles) {
+    init(numParticles);
+  }
 
   void init(int numParticles) {
     particles = new ArrayList<>();
@@ -53,7 +57,7 @@ class ParticleSystem {
     }
   }
 
-  void draw(Canvas canvas, Paint paint) {
+  public void draw(Canvas canvas, Paint paint) {
     final int particleSize = 5;
 
     for (Particle particle : particles) {
@@ -63,8 +67,6 @@ class ParticleSystem {
           random.nextInt(256),
           random.nextInt(256));
 
-      // Uncomment the next line to have plain white particles
-      //paint.setColor(Color.argb(255,255,255,255));
       canvas.drawRect(
           particle.getPosition().x,
           particle.getPosition().y,
@@ -73,7 +75,7 @@ class ParticleSystem {
     }
   }
 
-  boolean isRunning() {
+  public boolean isRunning() {
     return isRunning;
   }
 }

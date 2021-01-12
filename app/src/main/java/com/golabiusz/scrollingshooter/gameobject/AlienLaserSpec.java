@@ -6,7 +6,7 @@ public class AlienLaserSpec extends ObjectSpec {
 
   private static final String tag = "Alien Laser";
   private static final String bitmapName = "alien_laser";
-  private static final float speed = .75f;
+  private static final float speed = 2f;
   private static final PointF relativeScale = new PointF(14f, 160f);
   private static final String[] components = new String[]{
       "StdGraphicsComponent",

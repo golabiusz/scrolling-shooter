@@ -136,7 +136,7 @@ public class Transform {
     return isFacingRight;
   }
 
-  RectF getCollider() {
+  public RectF getCollider() {
     return collider;
   }
 

@@ -1,4 +1,4 @@
-package com.golabiusz.scrollingshooter;
+package com.golabiusz.scrollingshooter.physics;
 
 import android.graphics.PointF;
 import org.jetbrains.annotations.NotNull;

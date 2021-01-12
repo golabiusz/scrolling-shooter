@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import com.golabiusz.scrollingshooter.gameobject.GameObject;
+import com.golabiusz.scrollingshooter.physics.ParticleSystem;
+import com.golabiusz.scrollingshooter.physics.PhysicsEngine;
 import java.util.ArrayList;
 
 public class GameEngine extends SurfaceView
@@ -34,9 +36,7 @@ public class GameEngine extends SurfaceView
     gameState = new GameState(this, soundEngine, context);
     hud = new HUD(size);
     renderer = new Renderer(this);
-
-    particleSystem = new ParticleSystem();
-    particleSystem.init(100);
+    particleSystem = new ParticleSystem(100);
     physicsEngine = new PhysicsEngine(particleSystem);
 
     level = new Level(context, new PointF(size.x, size.y), this);
