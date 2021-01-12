@@ -23,18 +23,22 @@ class AlienDiverMovementComponent implements MovementComponent {
       location.x -= speed * slowDownRelativeToPlayer / fps;
     }
 
-    // Fall down then respawn at the top
-    location.y += speed / fps;
-
-    if (location.y > transform.getScreenSize().y) {
-      // Respawn at top
-      Random random = new Random();
-      location.y = random.nextInt(300) - transform.getObjectHeight();
-      location.x = random.nextInt((int) transform.getScreenSize().x);
-    }
+    fallDown(fps, transform);
 
     transform.updateCollider();
 
     return true;
+  }
+
+  private void fallDown(long fps, @NotNull Transform transform) {
+    float speed = transform.getSpeed();
+    PointF location = transform.getLocation();
+
+    location.y += speed / fps;
+    if (location.y > transform.getScreenSize().y) {
+      Random random = new Random();
+      location.y = 0 - transform.getObjectHeight();
+      location.x = random.nextInt((int) transform.getScreenSize().x);
+    }
   }
 }
